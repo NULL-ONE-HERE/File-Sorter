@@ -1,26 +1,40 @@
 import os
 import shutil
 
-def sort_files(source_folder, destination_folder_1, destination_folder_2, destination_folder_3):
-    for filename in os.listdir(source_folder):
-        source_file = os.path.join(source_folder, filename)
-        
-        if filename.startswith("main"):
-            destination = os.path.join(destination_folder_1, filename)
-        elif filename.startswith("alt"):
-            destination = os.path.join(destination_folder_2, filename)
-        elif filename.startswith("done"):
-            destination = os.path.join(destination_folder_3, filename)
-        else:
-            continue  # Skip files that don't match the specified criteria
-        
-        shutil.move(source_file, destination)
-        print(f"Moved {filename} to {destination}")
+target_folder = input("Enter the target folder path: ")
 
-# Example usage
-dump_folder = "dump"
-folder_one = "main"
-folder_two = "alt"
-folder_three = "done"
+# Create an empty dictionary to store extensions and their corresponding destination folders
+extension_destinations = {}
 
-sort_files(dump_folder, folder_one, folder_two, folder_three)
+# Iterate over all files in the source folder
+for root, dirs, files in os.walk(target_folder):
+    for file in files:
+        # Split the file name into name and extension
+        _, file_extension = os.path.splitext(file)
+        
+        # Add the extension to the dictionary if it's not already there
+        if file_extension not in extension_destinations:
+            destination = input(f"Enter the destination folder for files with extension '{file_extension}': ")
+            extension_destinations[file_extension] = destination
+
+# Print the list of unique file extensions and their corresponding destinations
+print("File Extensions and Their Destinations:")
+for ext, dest in extension_destinations.items():
+    print(f"Extension: {ext}, Destination: {dest}")
+
+# Move files to their respective destination folders
+for root, dirs, files in os.walk(target_folder):
+    for file in files:
+        _, file_extension = os.path.splitext(file)
+        source_file = os.path.join(root, file)
+        destination_folder = extension_destinations.get(file_extension, None)
+        
+        if destination_folder:
+            # Create the destination folder if it doesn't exist
+            if not os.path.exists(destination_folder):
+                os.makedirs(destination_folder)
+            
+            destination_file = os.path.join(destination_folder, file)
+            shutil.move(source_file, destination_file)
+
+print("Files have been moved to their specified destination folders.")
