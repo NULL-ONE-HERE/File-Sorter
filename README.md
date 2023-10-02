@@ -2,5 +2,5 @@
 This is a simple Python Script that is designed to sort files in a specific directory on a system and you tell it where to put them.
 
 The only libraries needed are:
-**os**
+**os**,
 **shutil**
